@@ -33,7 +33,7 @@ namespace ordsavecode
 
         private void code_copy_btn_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void setting_btn_Click(object sender, EventArgs e)
