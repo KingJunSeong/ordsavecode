@@ -52,7 +52,7 @@ namespace ordsavecode
             {
                 using (var writer = new StreamWriter(path + @"\setting.txt"))
                 {
-                    writer.WriteLine(path + @"\");
+                    writer.WriteLine(folderPath + @"\");
                     writer.WriteLine(name_textbox.Text);
                 }
                 MessageBox.Show("설정되었습니다");
