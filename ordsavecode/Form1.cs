@@ -23,7 +23,7 @@ namespace ordsavecode
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            timer1.Start();
         }
 
         private void code_copy_btn_Click(object sender, EventArgs e)
@@ -41,30 +41,53 @@ namespace ordsavecode
                 MessageBox.Show("설정을 다시하여주세요.");
                 return;
             }
-            ord_path = notepad_text[0];
-            ord_name = notepad_text[1];
-            DirectoryInfo info = new DirectoryInfo(ord_path);
-            string scan_path = string.Empty;
-            foreach (var item in info.GetFiles())
+            try
             {
-                scan_path = item.Name;
+                ord_path = notepad_text[0];
+                ord_name = notepad_text[1];
+                DirectoryInfo info = new DirectoryInfo(ord_path);
+                string scan_path = string.Empty;
+                Dictionary<int, string> arr = new Dictionary<int, string>();
+                int number = 0;
+                string replace = string.Empty;
+                foreach (var item in info.GetFiles())
+                {
+                    if (item.Name.Contains(ord_name) == true)
+                    {
+                        replace = Regex.Replace(item.Name, @"[^0-9]", "");
+                        arr.Add(int.Parse(replace), item.Name);
+                    }
+                }
+                int a = arr.Keys.Max();
+                //MessageBox.Show(arr[a]);
+                string real_path = $@"{ord_path}\{arr[a]}";
+                string content = File.ReadAllText(real_path);
+                Regex regex = new Regex("\"(.*?)\"");
+                var matches = regex.Matches(content);
+                string code = string.Empty;
+                foreach (var match in matches)
+                {
+                    code = match.ToString().Replace("\"", "");
+                }
+                Clipboard.SetText(code);
+                metroLabel2.Text = "복사완료";
             }
-            string real_path = $@"{ord_path}\{scan_path}";
-            string content = File.ReadAllText(real_path);
-            Regex regex = new Regex("\"(.*?)\"");
-            var matches = regex.Matches(content);
-            string code = string.Empty;
-            foreach(var  match in matches)
+            catch
             {
-                code = match.ToString().Replace("\"", "");
+                metroLabel2.Text = "복사실패";
+                MessageBox.Show("경로가 제대로 설정되었는지, 닉네임이 일치한지 확인해주세요");
             }
-            Clipboard.SetText(code);
         }
 
         private void setting_btn_Click(object sender, EventArgs e)
         {
             SettingForm settingForm = new SettingForm();
             settingForm.ShowDialog();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            metroLabel2.Text = "";
         }
     }
 }
